@@ -1,0 +1,50 @@
+================================================================================
+Performance Comparison: Threading vs Multiprocessing with Shared Data
+================================================================================
+
+Python version: 3.14.0 free-threading build (main, Oct  7 2025, 15:35:12) [Clang 20.1.4 ]
+Mode: Free-threaded (no GIL)
+
+Initializing shared data (10,000,000 elements)...
+✓ Shared data initialized (~267.0 MB)
+
+Configuration:
+  - Number of workers: 10
+  - Shared data size: 10,000,000 elements
+  - CPU cores: 16
+
+Key difference:
+  - Threading: Data shared by reference (no copying)
+  - Multiprocessing: Data serialized & copied to each process
+
+--------------------------------------------------------------------------------
+Running benchmarks...
+--------------------------------------------------------------------------------
+
+1. Sequential execution (10 chunks, one at a time):
+   Time: 40.295 seconds
+
+2. Threading (no-GIL) (10 threads, shared memory):
+   Time: 8.007 seconds
+   Speedup: 5.03x
+
+3. Multiprocessing (10 processes, data copied):
+   Time: 10.647 seconds
+   Speedup: 3.78x
+
+================================================================================
+Results Summary:
+================================================================================
+
+Approach                  Time (s)        Speedup         Efficiency
+--------------------------------------------------------------------------------
+Sequential                    40.295          1.00x         100.0%
+Threading (no-GIL)             8.007           5.03x           50.3%
+Multiprocessing               10.647           3.78x           37.8%
+
+--------------------------------------------------------------------------------
+Direct comparison: Free-threading vs Multiprocessing
+--------------------------------------------------------------------------------
+✓ Free-threading is FASTER by 33.0%
+  Free-threading: 8.007s
+  Multiprocessing: 10.647s
