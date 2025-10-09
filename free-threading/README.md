@@ -58,9 +58,11 @@ With the GIL (both Python 3.13 and 3.14), threading provides no speedup for CPU-
 
 Demo: `race_condition_demo.py`
 
-The GIL provided implicit thread safety by serializing bytecode execution. Code that appeared thread-safe may have hidden race conditions that only surface when the GIL is removed.
+Operations like `counter.value += 1` on shared state require explicit locks in multi-threaded code. This isn't atomic - it performs multiple bytecode operations (read, increment, write). When multiple threads execute this without locks, they can interleave these steps, causing race conditions where updates are lost.
 
-Example: `counter.value += 1` looks atomic but performs three operations (read, modify, write). The GIL ensured these completed before switching threads. Without the GIL, multiple threads can interleave these steps, causing data corruption.
+The GIL made race conditions rare by serializing bytecode execution. Thread switches typically happened after enough bytecode instructions that short sequences like `+= 1` usually completed atomically. Code that lacked proper synchronization appeared to work.
+
+Free-threading removes this accidental protection. Multiple threads execute simultaneously, and race conditions occur consistently.
 
 ```bash
 # Run with Python 3.14t (free-threaded)
