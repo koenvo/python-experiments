@@ -1,0 +1,9 @@
+Python: 3.13.1
+Mode: GIL-based
+Expected: 1,000,000
+
+Run 1: 1,000,000 (lost: 0 = 0.0%)
+Run 2: 1,000,000 (lost: 0 = 0.0%)
+Run 3: 1,000,000 (lost: 0 = 0.0%)
+Run 4: 1,000,000 (lost: 0 = 0.0%)
+Run 5: 1,000,000 (lost: 0 = 0.0%)

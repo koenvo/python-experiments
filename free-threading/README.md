@@ -47,6 +47,42 @@ With the GIL, threading provides no speedup for CPU-bound tasks.
 3. Free-threading achieves 5x speedup vs 0.96x with GIL-based Python
 4. 50% efficiency (5 of 10 cores utilized) is limited by memory bandwidth contention
 
+## Race Conditions Without the GIL
+
+Demo: `race_condition_demo.py`
+
+Without the GIL, non-atomic operations on shared state cause data corruption. The `+=` operator performs three separate steps (read, modify, write) that can be interleaved between threads.
+
+```bash
+# Run with Python 3.14t (free-threaded)
+uv run --python 3.14t python race_condition_demo.py
+
+# Run with Python 3.13 (GIL-based)
+uv run --python 3.13 python race_condition_demo.py
+```
+
+### Results: 10 threads, 100k increments each
+
+**Python 3.14t (Free-threaded):**
+```
+Expected: 1,000,000
+Run 1: 195,277 (lost: 804,723 = 80.5%)
+Run 2: 184,918 (lost: 815,082 = 81.5%)
+Run 3: 183,916 (lost: 816,084 = 81.6%)
+```
+
+**Python 3.13 (GIL-based):**
+```
+Expected: 1,000,000
+Run 1: 1,000,000 (lost: 0 = 0.0%)
+Run 2: 1,000,000 (lost: 0 = 0.0%)
+Run 3: 1,000,000 (lost: 0 = 0.0%)
+```
+
+With the GIL, only one thread executes at a time, so read-modify-write completes atomically. Without the GIL, multiple threads execute simultaneously, causing ~80% data loss from race conditions.
+
+Free-threading requires explicit synchronization (locks, atomics) for shared mutable state.
+
 ## When to Use Each Approach
 
 ### Free-Threading

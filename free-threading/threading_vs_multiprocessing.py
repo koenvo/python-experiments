@@ -111,10 +111,8 @@ def main():
     print(f"\nPython version: {sys.version}")
 
     # Check if GIL is enabled
-    if hasattr(sys, '_is_gil_enabled'):
-        gil_enabled = sys._is_gil_enabled()
-        mode = "GIL-based (traditional)" if gil_enabled else "Free-threaded (no GIL)"
-        print(f"Mode: {mode}")
+    if not getattr(sys, '_is_gil_enabled', lambda: True)():
+        print(f"Mode: Free-threaded (no GIL)")
     else:
         print("Mode: GIL-based (traditional)")
 
