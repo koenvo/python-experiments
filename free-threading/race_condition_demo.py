@@ -1,10 +1,10 @@
 """
 Race condition demo: += operator is not atomic
 
-counter[0] += 1 actually does:
-1. temp = counter[0]     (READ)
-2. temp = temp + 1       (MODIFY)
-3. counter[0] = temp     (WRITE)
+counter.value += 1 actually does:
+1. temp = counter.value     (READ)
+2. temp = temp + 1          (MODIFY)
+3. counter.value = temp     (WRITE)
 
 With GIL: Steps complete before thread switch (mostly safe)
 Without GIL: Multiple threads in steps 1-3 simultaneously (data loss)
@@ -14,9 +14,16 @@ import sys
 import threading
 
 
-def increment(counter: list, iterations: int):
+class Counter:
+    def __init__(self):
+        self.value = 0
+
+    def increment(self):
+        self.value += 1
+
+def increment(counter: Counter, iterations: int):
     for _ in range(iterations):
-        counter[0] += 1  # NOT ATOMIC!
+        counter.increment()  # NOT ATOMIC!
 
 
 def main():
@@ -32,7 +39,7 @@ def main():
     print(f"Expected: {expected:,}\n")
 
     for i in range(5):
-        counter = [0]
+        counter = Counter()
         threads = [threading.Thread(target=increment, args=(counter, iterations)) for _ in range(num_threads)]
 
         for t in threads:
@@ -40,9 +47,9 @@ def main():
         for t in threads:
             t.join()
 
-        lost = expected - counter[0]
+        lost = expected - counter.value
         loss_pct = (lost / expected) * 100
-        print(f"Run {i+1}: {counter[0]:,} (lost: {lost:,} = {loss_pct:.1f}%)")
+        print(f"Run {i+1}: {counter.value:,} (lost: {lost:,} = {loss_pct:.1f}%)")
 
 
 if __name__ == "__main__":
