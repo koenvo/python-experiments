@@ -54,11 +54,13 @@ With the GIL (both Python 3.13 and 3.14), threading provides no speedup for CPU-
 3. Free-threading achieves 5x speedup vs 0.96x with GIL-based Python
 4. 50% efficiency (5 of 10 cores utilized) is limited by memory bandwidth contention
 
-## Race Conditions Without the GIL
+## The GIL Was Hiding Your Bugs
 
 Demo: `race_condition_demo.py`
 
-Without the GIL, non-atomic operations on shared state cause data corruption. The `+=` operator performs three separate steps (read, modify, write) that can be interleaved between threads.
+The GIL provided implicit thread safety by serializing bytecode execution. Code that appeared thread-safe may have hidden race conditions that only surface when the GIL is removed.
+
+Example: `counter.value += 1` looks atomic but performs three operations (read, modify, write). The GIL ensured these completed before switching threads. Without the GIL, multiple threads can interleave these steps, causing data corruption.
 
 ```bash
 # Run with Python 3.14t (free-threaded)
@@ -86,9 +88,7 @@ Run 2: 1,000,000 (lost: 0 = 0.0%)
 Run 3: 1,000,000 (lost: 0 = 0.0%)
 ```
 
-With the GIL, only one thread executes at a time, so read-modify-write completes atomically. Without the GIL, multiple threads execute simultaneously, causing ~80% data loss from race conditions.
-
-Free-threading requires explicit synchronization (locks, atomics) for shared mutable state.
+Migrating to free-threaded Python requires auditing shared mutable state and adding explicit synchronization (locks, atomics, or thread-safe data structures).
 
 ## When to Use Each Approach
 
