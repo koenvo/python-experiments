@@ -54,44 +54,6 @@ With the GIL (both Python 3.13 and 3.14), threading provides no speedup for CPU-
 3. Free-threading achieves 5x speedup vs 0.96x with GIL-based Python
 4. 50% efficiency (5 of 10 cores utilized) is limited by memory bandwidth contention
 
-## The GIL Was Hiding Your Bugs
-
-Demo: `race_condition_demo.py`
-
-Operations like `counter.value += 1` on shared state require explicit locks in multi-threaded code. This isn't atomic - it performs multiple bytecode operations (read, increment, write). When multiple threads execute this without locks, they can interleave these steps, causing race conditions where updates are lost.
-
-The GIL made race conditions rare by serializing bytecode execution. Thread switches typically happened after enough bytecode instructions that short sequences like `+= 1` usually completed atomically. Code that lacked proper synchronization appeared to work.
-
-Free-threading removes this accidental protection. Multiple threads execute simultaneously, and race conditions occur consistently.
-
-```bash
-# Run with Python 3.14t (free-threaded)
-uv run --python 3.14t python race_condition_demo.py
-
-# Run with Python 3.13 (GIL-based)
-uv run --python 3.13 python race_condition_demo.py
-```
-
-### Results: 10 threads, 100k increments each
-
-**Python 3.14t (Free-threaded):**
-```
-Expected: 1,000,000
-Run 1: 195,277 (lost: 804,723 = 80.5%)
-Run 2: 184,918 (lost: 815,082 = 81.5%)
-Run 3: 183,916 (lost: 816,084 = 81.6%)
-```
-
-**Python 3.13 (GIL-based):**
-```
-Expected: 1,000,000
-Run 1: 1,000,000 (lost: 0 = 0.0%)
-Run 2: 1,000,000 (lost: 0 = 0.0%)
-Run 3: 1,000,000 (lost: 0 = 0.0%)
-```
-
-Migrating to free-threaded Python requires auditing shared mutable state and adding explicit synchronization (locks, atomics, or thread-safe data structures).
-
 ## When to Use Each Approach
 
 ### Free-Threading
@@ -176,6 +138,44 @@ With the GIL, threading provides no speedup for CPU-bound tasks (0.96x - slower 
 - **Shared data:** Threading accesses by reference, multiprocessing must serialize/copy
 - **Timing:** Uses `time.perf_counter()` for high-precision measurements
 - **Fairness:** Identical computation executed by all approaches
+
+## The GIL Was Hiding Your Bugs
+
+Demo: `race_condition_demo.py`
+
+Operations like `counter.value += 1` on shared state require explicit locks in multi-threaded code. This isn't atomic - it performs multiple bytecode operations (read, increment, write). When multiple threads execute this without locks, they can interleave these steps, causing race conditions where updates are lost.
+
+The GIL made race conditions rare by serializing bytecode execution. Thread switches typically happened after enough bytecode instructions that short sequences like `+= 1` usually completed atomically. Code that lacked proper synchronization appeared to work.
+
+Free-threading removes this accidental protection. Multiple threads execute simultaneously, and race conditions occur consistently.
+
+```bash
+# Run with Python 3.14t (free-threaded)
+uv run --python 3.14t python race_condition_demo.py
+
+# Run with Python 3.13 (GIL-based)
+uv run --python 3.13 python race_condition_demo.py
+```
+
+### Results: 10 threads, 100k increments each
+
+**Python 3.14t (Free-threaded):**
+```
+Expected: 1,000,000
+Run 1: 195,277 (lost: 804,723 = 80.5%)
+Run 2: 184,918 (lost: 815,082 = 81.5%)
+Run 3: 183,916 (lost: 816,084 = 81.6%)
+```
+
+**Python 3.13 (GIL-based):**
+```
+Expected: 1,000,000
+Run 1: 1,000,000 (lost: 0 = 0.0%)
+Run 2: 1,000,000 (lost: 0 = 0.0%)
+Run 3: 1,000,000 (lost: 0 = 0.0%)
+```
+
+Migrating to free-threaded Python requires auditing shared mutable state and adding explicit synchronization (locks, atomics, or thread-safe data structures).
 
 ## Learn More
 
