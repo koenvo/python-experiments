@@ -31,6 +31,13 @@ Multiprocessing:     10.647s  (3.78x speedup, 37.8% efficiency)
 
 Free-threading is 33% faster. Shared memory access eliminates serialization overhead.
 
+#### Ubuntu Server 22.04 - Python 3.14 with GIL (16 cores, 10 workers)
+```
+Sequential:              35.955s  (baseline)
+Threading (with GIL):    38.301s  (0.94x - no speedup)
+Multiprocessing:          7.499s  (4.79x speedup, 47.9% efficiency)
+```
+
 #### Ubuntu Server 22.04 - Python 3.13 with GIL (16 cores, 10 workers)
 ```
 Sequential:              46.885s  (baseline)
@@ -38,7 +45,7 @@ Threading (with GIL):    48.598s  (0.96x - no speedup)
 Multiprocessing:         10.625s  (4.41x speedup, 44.1% efficiency)
 ```
 
-With the GIL, threading provides no speedup for CPU-bound tasks.
+With the GIL (both Python 3.13 and 3.14), threading provides no speedup for CPU-bound tasks. The performance improvement requires both Python 3.14 AND the free-threaded build (3.14t).
 
 ### Key Findings
 
