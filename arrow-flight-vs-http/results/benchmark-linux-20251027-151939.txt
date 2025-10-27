@@ -1,0 +1,31 @@
+Python: 3.14.0
+Platform: Linux 5.15.0-117-generic
+Runs: 100
+
+======================================================================
+Results Summary
+======================================================================
+
+Arrow Flight:
+  Data size: 55.1 MB (uncompressed)
+  Mean time: 0.038s
+  Median time: 0.038s
+  Min time: 0.036s
+  Max time: 0.044s
+  Std dev: 0.001s
+  Throughput: 1443.1 MB/s
+
+Parquet over HTTP:
+  File size: 40.0 MB (compressed)
+  Mean time: 0.059s
+  Median time: 0.058s
+  Min time: 0.056s
+  Max time: 0.127s
+  Std dev: 0.007s
+  Throughput: 676.6 MB/s
+
+======================================================================
+Comparison
+======================================================================
+Arrow Flight is 1.55x faster (55.0% faster)
+File size difference: 1.38x (uncompressed vs compressed)

@@ -1,0 +1,11 @@
+[project]
+name = "arrow-flight-vs-http"
+version = "0.1.0"
+description = "Benchmark Arrow Flight vs Parquet-over-HTTP"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pyarrow>=14.0.0",
+    "numpy>=1.24.0",
+    "requests>=2.31.0",
+]

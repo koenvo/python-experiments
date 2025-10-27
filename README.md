@@ -10,6 +10,12 @@ Benchmarks demonstrating Python 3.14's experimental free-threaded build that rem
 
 **Key findings:** 5-6x speedup for CPU-bound tasks, competitive with multiprocessing, 10x memory savings for shared state.
 
+### ✈️ [Arrow Flight vs Parquet-over-HTTP](./arrow-flight-vs-http/)
+
+Benchmark comparing Arrow Flight streaming protocol against traditional Parquet file downloads served by nginx. Tests throughput, latency, and memory efficiency for columnar data transfer.
+
+**Comparison:** Arrow Flight enables zero-copy streaming vs compressed file downloads. Parquet-over-HTTP represents the lower bound (fastest non-Arrow approach).
+
 ## Requirements
 
 - [uv](https://docs.astral.sh/uv/) - Fast Python package manager
