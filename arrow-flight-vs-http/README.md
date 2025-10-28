@@ -67,6 +67,7 @@ Arrow Flight is 1.55x faster despite transferring 38% more data.
 **Arrow Flight:**
 - Zero-copy streaming
 - No decompression overhead
+- Built-in authentication/authorization support
 - Requires gRPC infrastructure
 - Not cacheable (dynamic)
 
@@ -80,7 +81,7 @@ Arrow Flight is 1.55x faster despite transferring 38% more data.
 
 - **Data size**: 1M rows, ~100 MB uncompressed
 - **Schema**: Timestamp, IDs, floats (similar to analytics data)
-- **Network**: localhost (isolates protocol overhead)
+- **Network**: localhost (eliminates network bandwidth as bottleneck)
 - **Parquet compression**: Snappy (default)
 
 ## Learn More
