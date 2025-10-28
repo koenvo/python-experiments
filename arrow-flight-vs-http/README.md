@@ -50,8 +50,8 @@ docker stop arrow-nginx && docker rm arrow-nginx
 ### Ubuntu Server 22.04 (100 runs, 1M rows)
 
 ```
-Arrow Flight:         38ms   1443 MB/s   (55.1 MB uncompressed)
-Parquet over HTTP:    59ms    677 MB/s   (40.0 MB compressed)
+Arrow Flight:         38ms   1443 MB/s   (1.55x faster, 55.1 MB uncompressed)
+Parquet over HTTP:    59ms    677 MB/s   (baseline, 40.0 MB compressed)
 ```
 
 Arrow Flight is 1.55x faster despite transferring 38% more data.
@@ -59,7 +59,7 @@ Arrow Flight is 1.55x faster despite transferring 38% more data.
 ### Key Findings
 
 1. Arrow Flight avoids decompression + Parquet deserialization overhead
-2. On localhost, CPU (decompression) is bottleneck, not network transfer
+2. On localhost, CPU overhead (decompression/deserialization) likely dominates network transfer cost
 3. Untested: slower networks or column projection impact
 
 ## Trade-offs
